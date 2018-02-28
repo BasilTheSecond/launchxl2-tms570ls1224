@@ -3,7 +3,7 @@
   <DEVICE>
     <family>TMS570LS12x</family>
     <device>TMS570LS1224PGE</device>
-    <dilfile>SerialTxInt.dil</dilfile>
+    <dilfile>SerialRxInt.dil</dilfile>
     <tools>ti</tools>
   </DEVICE>
   <VERSION>
