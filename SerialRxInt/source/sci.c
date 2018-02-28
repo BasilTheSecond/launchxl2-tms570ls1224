@@ -145,12 +145,12 @@ void sciInit(void)
     scilinREG->SETINT = (uint32)((uint32)0U << 26U)  /* Framing error */
                       | (uint32)((uint32)0U << 25U)  /* Overrun error */
                       | (uint32)((uint32)0U << 24U)  /* Parity error */
-                      | (uint32)((uint32)0U << 9U)  /* Receive */
+                      | (uint32)((uint32)1U << 9U)  /* Receive */
                       | (uint32)((uint32)0U << 1U)  /* Wakeup */
                       | (uint32)((uint32)0U);  /* Break detect */
 
     /** - initialize global transfer variables */
-    g_sciTransfer_t[1U].mode   = (uint32)0U << 8U;
+    g_sciTransfer_t[1U].mode   = (uint32)1U << 8U;
     g_sciTransfer_t[1U].tx_length = 0U;
 	g_sciTransfer_t[1U].rx_length = 0U;
 

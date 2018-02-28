@@ -77,7 +77,6 @@ int main(void)
     sciInit();
     g_pressedKeyReady = 0;
     g_promptReady = 0;
-    sciEnableNotification(scilinREG, SCI_TX_INT | SCI_RX_INT);
     sciSend(scilinREG, strlen(g_prompt), (uint8*) g_prompt);
     while (1) {
         if (g_promptReady) {

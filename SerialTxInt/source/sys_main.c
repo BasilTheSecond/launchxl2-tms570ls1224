@@ -73,7 +73,6 @@ int main(void)
 
     _enable_IRQ();
     sciInit();
-    sciEnableNotification(scilinREG, SCI_TX_INT);
     sciSend(scilinREG, strlen(banner), (uint8*) banner);
     while (1) {
         if (g_sciNotifyTx) {
