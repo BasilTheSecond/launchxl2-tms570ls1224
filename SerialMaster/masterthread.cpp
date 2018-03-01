@@ -67,6 +67,31 @@ MasterThread::~MasterThread()
     wait();
 }
 
+/* Communication protocol between master (M) and slave (S):
+ * Register read:
+ * M->S: RD A0 A1 A2 A3 X0 X1 X2 X3
+ * S->M: S D0 D1 D2 D3
+ * RD: Register read command (1 byte)
+ * A0..3: Register address (4 bytes)
+ * X0..3: "Don't care" data (4 bytes)
+ * S: Command status (1 byte)
+ * D0..3: Register value (4 bytes)
+ * A0: Register address MSB
+ * A3: Register address LSB
+ * D0: Register value MSB
+ * D3: Register value LSB
+ * Register write:
+ * M->S: WR A0 A1 A2 A3 D0 D1 D2 D3
+ * S->M: S D0 D1 D2 D3
+ * WR: Register write command (1 byte)
+ * A0..3: Register address (4 bytes)
+ * D0..3: Register value (4 bytes)
+ * S: Command status (1 byte)
+ * A0: Register address MSB
+ * A3: Register address LSB
+ * D0: Register value MSB
+ * D3: Register value LSB
+ */
 void MasterThread::transaction(const SettingsDialog::Settings settings, int waitTimeout, const QString &request)
 {
     const QMutexLocker locker(&m_mutex);
