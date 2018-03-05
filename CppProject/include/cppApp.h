@@ -15,7 +15,6 @@ class CppApp
 public:
     CppApp(std::string& name);
     ~CppApp();
-    static void cppAppTask(void *parameter);
     CppApp& operator+=(CppApp& cppApp);
 private:
     std::string m_name;
