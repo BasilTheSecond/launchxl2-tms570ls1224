@@ -11,6 +11,7 @@ static void btaInitTask(void* parameter)
     btaApp.start();
     while (1) {
         vTaskDelay(k_btaInitTaskDelay);
+
     }
 }
 

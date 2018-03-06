@@ -1,13 +1,5 @@
 #include "btaApp.h"
-
-#define portRESET_PRIVILEGE(xRunningPrivileged) \
-                         if( xRunningPrivileged == 0 ) portSWITCH_TO_USER_MODE()
-#ifdef __cplusplus
-#pragma SWI_ALIAS(1)
-#else
-#pragma SWI_ALIAS(prvRaisePrivilege, 1)
-#endif
-extern "C" BaseType_t prvRaisePrivilege(void);
+#include "libRaisePrivilege.h"
 
 const TickType_t BtaApp::k_taskDelay = pdMS_TO_TICKS(1000);
 volatile uint32 BtaApp::s_flags;
@@ -144,18 +136,26 @@ void BtaApp::run()
             case COMM_COMMAND_REG_READ:
                 switch (address) {
                 case REG_USER_LED:
-                    g_commSlaveToMaster.msg.data[3]
-                              |= (m_libGpio.getPin(LibGpio::LIB_GPIO_USER_LED_A)
-                                ? REG_USER_LED_A_ON : REG_USER_LED_A_OFF)
-                              |  (m_libGpio.getPin(LibGpio::LIB_GPIO_USER_LED_B)
-                                ? REG_USER_LED_B_ON : REG_USER_LED_B_OFF);
+                    {
+                        bool value;
+                        m_libGpio.getPin(LibGpio::LIB_GPIO_USER_LED_A, value);
+                        g_commSlaveToMaster.msg.data[3]
+                            |= (value ? REG_USER_LED_A_ON : REG_USER_LED_A_OFF);
+                        m_libGpio.getPin(LibGpio::LIB_GPIO_USER_LED_B, value);
+                        g_commSlaveToMaster.msg.data[3]
+                            |= (value ? REG_USER_LED_B_ON : REG_USER_LED_B_OFF);
+                    }
                     break;
                 case REG_USER_SWITCH:
-                    g_commSlaveToMaster.msg.data[3]
-                           |= (m_libGpio.getPin(LibGpio::LIB_GPIO_USER_SWITCH_A)
-                             ? REG_USER_SWITCH_A : 0)
-                           |  (m_libGpio.getPin(LibGpio::LIB_GPIO_USER_SWITCH_B)
-                             ? REG_USER_SWITCH_B : 0);
+                    {
+                        bool value;
+                        m_libGpio.getPin(LibGpio::LIB_GPIO_USER_SWITCH_A, value);
+                        g_commSlaveToMaster.msg.data[3]
+                            |= (value ? REG_USER_SWITCH_A : 0);
+                        m_libGpio.getPin(LibGpio::LIB_GPIO_USER_SWITCH_B, value);
+                        g_commSlaveToMaster.msg.data[3]
+                            |= (value ? REG_USER_SWITCH_B : 0);
+                    }
                     break;
                 default:
                     g_commSlaveToMaster.msg.status = COMM_COMMAND_STATUS_ERROR_ADDR;
@@ -170,16 +170,16 @@ void BtaApp::run()
                 switch (address) {
                 case REG_USER_LED:
                     if (value & REG_USER_LED_A_ON) {
-                        m_libGpio.setPin(LibGpio::LIB_GPIO_USER_LED_A, 1);
+                        m_libGpio.setPin(LibGpio::LIB_GPIO_USER_LED_A, true);
                     }
                     if (value & REG_USER_LED_A_OFF) {
-                        m_libGpio.setPin(LibGpio::LIB_GPIO_USER_LED_A, 0);
+                        m_libGpio.setPin(LibGpio::LIB_GPIO_USER_LED_A, false);
                     }
                     if (value & REG_USER_LED_B_ON) {
-                        m_libGpio.setPin(LibGpio::LIB_GPIO_USER_LED_B, 1);
+                        m_libGpio.setPin(LibGpio::LIB_GPIO_USER_LED_B, true);
                     }
                     if (value & REG_USER_LED_B_OFF) {
-                        m_libGpio.setPin(LibGpio::LIB_GPIO_USER_LED_B, 0);
+                        m_libGpio.setPin(LibGpio::LIB_GPIO_USER_LED_B, false);
                     }
                     break;
                 case REG_USER_SWITCH:
@@ -194,19 +194,19 @@ void BtaApp::run()
                 g_commSlaveToMaster.msg.status = COMM_COMMAND_STATUS_ERROR_CMD;
                 break;
             }
-            BaseType_t xRunningPrivileged = prvRaisePrivilege();
+            LibRaisePrivilege libRaisePrivilege;
             sciSend(scilinREG, sizeof(g_commSlaveToMaster),
                                                     g_commSlaveToMaster.buffer);
-            portRESET_PRIVILEGE( xRunningPrivileged );
         }
         if (s_flags & SCI_TX_INT) {
             clearFlags(SCI_TX_INT);
-            BaseType_t xRunningPrivileged = prvRaisePrivilege();
+            LibRaisePrivilege libRaisePrivilege;
             sciReceive(scilinREG, sizeof(g_commMasterToSlave),
                                                     g_commMasterToSlave.buffer);
-            portRESET_PRIVILEGE( xRunningPrivileged );
         }
-        xSemaphoreTake(s_sem, k_taskDelay);
+        if (xSemaphoreTake(s_sem, k_taskDelay) == pdFALSE) {
+            continue;
+        }
     }
 }
 
