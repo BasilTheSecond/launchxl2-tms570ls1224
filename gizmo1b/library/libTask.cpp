@@ -10,16 +10,22 @@ LibTask::LibTask(const char* name, uint16_t stackSize, UBaseType_t priority) :
 LibTask::~LibTask()
 {
 #if INCLUDE_vTaskDelete
-    vTaskDelete(m_handle);
+    if (!m_taskHandle) {
+        vTaskDelete(m_taskHandle);
+    }
 #endif
 }
 
 void LibTask::start()
 {
-    xTaskCreate(task, m_name.c_str(), m_stackSize, this, m_priority, &m_handle);
+    xTaskCreate(task, m_name.c_str(), m_stackSize, this, m_priority, &m_taskHandle);
 }
 
 void LibTask::task(void* parameter)
 {
     reinterpret_cast<LibTask*>(parameter)->run();
+#if INCLUDE_vTaskDelete
+    reinterpret_cast<LibTask*>(parameter)->m_taskHandle = NULL;
+    vTaskDelete(NULL);
+#endif
 }

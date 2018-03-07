@@ -15,7 +15,7 @@ public:
 private:
     static void task(void* parameter);
 private:
-    TaskHandle_t m_handle;
+    TaskHandle_t m_taskHandle;
     std::string m_name;
     uint16_t m_stackSize;
     UBaseType_t m_priority;
