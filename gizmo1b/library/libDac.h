@@ -4,13 +4,13 @@
 class LibDac
 {
 public:
-    enum LibDacError {
-        LIB_DAC_OKAY,
-        LIB_DAC_ERROR_SET_VALUE_OUT_OF_RANGE,
+    enum LibDacStatus {
+        OKAY,
+        ERROR_SET_VALUE_OUT_OF_RANGE,
     };
     LibDac();
     virtual ~LibDac();
-    int set(double value); // 0-5V
+    int set(float value); // 0-5V
 private:
     static bool s_isInitialized;
 };

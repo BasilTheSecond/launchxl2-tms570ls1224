@@ -4,9 +4,9 @@
 class LibFan
 {
 public:
-    enum LibFanError {
-        LIB_FAN_OKAY,
-        LIB_FAN_ERROR_SET_VALUE_OUT_OF_RANGE,
+    enum LibFanStatus {
+        OKAY,
+        ERROR_SET_VALUE_OUT_OF_RANGE,
     };
     LibFan();
     virtual ~LibFan();

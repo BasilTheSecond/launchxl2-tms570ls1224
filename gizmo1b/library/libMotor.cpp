@@ -21,58 +21,58 @@ void LibMotor::initialize()
 int LibMotor::moveRelative(int direction, int stepsCount)
 {
     switch (direction) {
-    case LIB_MOTOR_DIRECTION_POSITIVE:
-    case LIB_MOTOR_DIRECTION_NEGATIVE:
+    case POSITIVE:
+    case NEGATIVE:
         break;
     default:
-        return LIB_MOTOR_ERROR_INVALID_DIRECTION;
+        return ERROR_INVALID_DIRECTION;
     }
     if (stepsCount < 0 || stepsCount > 1000000) {
-        return LIB_MOTOR_ERROR_STEPS_COUNT;
+        return ERROR_STEPS_COUNT;
     }
-    return LIB_MOTOR_OKAY;
+    return OKAY;
 }
 
 int LibMotor::moveAbs(int position)
 {
-    return LIB_MOTOR_OKAY;
+    return OKAY;
 }
 
 int LibMotor::setMicroSteps(int value)
 {
     switch (value) {
-    case LIB_MOTOR_MICROSTEPS_0:
-    case LIB_MOTOR_MICROSTEPS_1:
-    case LIB_MOTOR_MICROSTEPS_2:
-    case LIB_MOTOR_MICROSTEPS_3:
-    case LIB_MOTOR_MICROSTEPS_4:
-    case LIB_MOTOR_MICROSTEPS_5:
-    case LIB_MOTOR_MICROSTEPS_6:
-    case LIB_MOTOR_MICROSTEPS_7:
+    case MICROSTEPS_0:
+    case MICROSTEPS_1:
+    case MICROSTEPS_2:
+    case MICROSTEPS_3:
+    case MICROSTEPS_4:
+    case MICROSTEPS_5:
+    case MICROSTEPS_6:
+    case MICROSTEPS_7:
         break;
     default:
-        return LIB_MOTOR_ERROR_INVALID_MICROSTEPS;
+        return ERROR_INVALID_MICROSTEPS;
     }
-    return LIB_MOTOR_OKAY;
+    return OKAY;
 }
 
-int LibMotor::setSpeed(double speed)
+int LibMotor::setSpeed(float speed)
 {
-    return LIB_MOTOR_OKAY;
+    return OKAY;
 }
 
-int LibMotor::setAcceleration(double acceleration)
+int LibMotor::setAcceleration(float acceleration)
 {
-    return LIB_MOTOR_OKAY;
+    return OKAY;
 }
 
-int LibMotor::setDeceleration(double deceleration)
+int LibMotor::setDeceleration(float deceleration)
 {
-    return LIB_MOTOR_OKAY;
+    return OKAY;
 }
 
-int LibMotor::setHoldCurrent(double holdCurrent)
+int LibMotor::setHoldCurrent(float holdCurrent)
 {
-    return LIB_MOTOR_OKAY;
+    return OKAY;
 }
 

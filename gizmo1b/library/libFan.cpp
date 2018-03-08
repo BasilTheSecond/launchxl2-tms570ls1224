@@ -16,9 +16,9 @@ LibFan::~LibFan()
 int LibFan::set(int value)
 {
     if (value < 0 || value > 100) {
-        return LIB_FAN_ERROR_SET_VALUE_OUT_OF_RANGE;
+        return ERROR_SET_VALUE_OUT_OF_RANGE;
     }
-    return LIB_FAN_OKAY;
+    return OKAY;
 }
 
 int LibFan::read()

@@ -138,10 +138,10 @@ void BtaApp::run()
                 case REG_USER_LED:
                     {
                         bool value;
-                        m_libGpio.getPin(LibGpio::LIB_GPIO_USER_LED_A, value);
+                        m_libGpio.getPin(LibGpio::USER_LED_AIN, value);
                         g_commSlaveToMaster.msg.data[3]
                             |= (value ? REG_USER_LED_A_ON : REG_USER_LED_A_OFF);
-                        m_libGpio.getPin(LibGpio::LIB_GPIO_USER_LED_B, value);
+                        m_libGpio.getPin(LibGpio::USER_LED_BIN, value);
                         g_commSlaveToMaster.msg.data[3]
                             |= (value ? REG_USER_LED_B_ON : REG_USER_LED_B_OFF);
                     }
@@ -149,10 +149,10 @@ void BtaApp::run()
                 case REG_USER_SWITCH:
                     {
                         bool value;
-                        m_libGpio.getPin(LibGpio::LIB_GPIO_USER_SWITCH_A, value);
+                        m_libGpio.getPin(LibGpio::USER_SWITCH_A, value);
                         g_commSlaveToMaster.msg.data[3]
                             |= (value ? REG_USER_SWITCH_A : 0);
-                        m_libGpio.getPin(LibGpio::LIB_GPIO_USER_SWITCH_B, value);
+                        m_libGpio.getPin(LibGpio::USER_SWITCH_B, value);
                         g_commSlaveToMaster.msg.data[3]
                             |= (value ? REG_USER_SWITCH_B : 0);
                     }
@@ -170,16 +170,16 @@ void BtaApp::run()
                 switch (address) {
                 case REG_USER_LED:
                     if (value & REG_USER_LED_A_ON) {
-                        m_libGpio.setPin(LibGpio::LIB_GPIO_USER_LED_A, true);
+                        m_libGpio.setPin(LibGpio::USER_LED_AOUT, true);
                     }
                     if (value & REG_USER_LED_A_OFF) {
-                        m_libGpio.setPin(LibGpio::LIB_GPIO_USER_LED_A, false);
+                        m_libGpio.setPin(LibGpio::USER_LED_AOUT, false);
                     }
                     if (value & REG_USER_LED_B_ON) {
-                        m_libGpio.setPin(LibGpio::LIB_GPIO_USER_LED_B, true);
+                        m_libGpio.setPin(LibGpio::USER_LED_BOUT, true);
                     }
                     if (value & REG_USER_LED_B_OFF) {
-                        m_libGpio.setPin(LibGpio::LIB_GPIO_USER_LED_B, false);
+                        m_libGpio.setPin(LibGpio::USER_LED_BOUT, false);
                     }
                     break;
                 case REG_USER_SWITCH:

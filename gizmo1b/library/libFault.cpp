@@ -17,17 +17,30 @@ void LibFault::reset()
 {
 }
 
-int LibFault::read(int state, bool& value)
+int LibFault::readState(int state, bool& isFault)
 {
     switch (state) {
-    case LIB_FAULT_STATE_TEC_OCD_POS:
-    case LIB_FAULT_STATE_TEC_OCD_NEG:
-    case LIB_FAULT_STATE_OVERTEMP1:
-    case LIB_FAULT_STATE_OVERTEMP2:
-        value = false;
+    case TEC_OCD_POS:
+    case TEC_OCD_NEG:
+    case OVERTEMP1:
+    case OVERTEMP2:
+        isFault = false;
         break;
     default:
-        return LIB_FAULT_ERROR_INVALID_STATE;
+        return INVALID_STATE;
     }
-    return LIB_FAULT_OKAY;
+    return OKAY;
+}
+
+int LibFault::readNtcPresent(int ntc, bool& isNtcPresent)
+{
+    switch (ntc) {
+    case NTC1:
+    case NTC2:
+        isNtcPresent = false;
+        break;
+    default:
+        return INVALID_NTC;
+    }
+    return OKAY;
 }

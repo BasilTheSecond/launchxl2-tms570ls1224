@@ -5,19 +5,25 @@ class LibFault
 {
 public:
     enum LibFaultState {
-        LIB_FAULT_STATE_TEC_OCD_POS,
-        LIB_FAULT_STATE_TEC_OCD_NEG,
-        LIB_FAULT_STATE_OVERTEMP1,
-        LIB_FAULT_STATE_OVERTEMP2,
+        TEC_OCD_POS,
+        TEC_OCD_NEG,
+        OVERTEMP1, // only valid if NTC1 present
+        OVERTEMP2, // only valid if NTC2 present
     };
-    enum LibFaultError {
-        LIB_FAULT_OKAY,
-        LIB_FAULT_ERROR_INVALID_STATE,
+    enum LibFaultNtc {
+        NTC1,
+        NTC2,
+    };
+    enum LibFaultStatus {
+        OKAY,
+        INVALID_STATE,
+        INVALID_NTC,
     };
     LibFault();
     virtual ~LibFault();
     void reset();
-    int read(int state, bool& value);
+    int readState(int state, bool& isFault); // monitor every 1s
+    int readNtcPresent(int ntc, bool& isNtcPresent);
 private:
     static bool s_isInitialized;
 };
