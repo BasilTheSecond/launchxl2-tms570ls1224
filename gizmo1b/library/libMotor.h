@@ -5,24 +5,24 @@ class LibMotor
 {
 public:
     enum LibMotorDirection {
-        LIB_MOTOR_DIRECTION_POSITIVE,
-        LIB_MOTOR_DIRECTION_NEGATIVE,
+        POSITIVE,
+        NEGATIVE,
     };
     enum LibMotorMicrosteps {
-        LIB_MOTOR_MICROSTEPS_0,
-        LIB_MOTOR_MICROSTEPS_1,
-        LIB_MOTOR_MICROSTEPS_2,
-        LIB_MOTOR_MICROSTEPS_3,
-        LIB_MOTOR_MICROSTEPS_4,
-        LIB_MOTOR_MICROSTEPS_5,
-        LIB_MOTOR_MICROSTEPS_6,
-        LIB_MOTOR_MICROSTEPS_7,
+        MICROSTEPS_0,
+        MICROSTEPS_1,
+        MICROSTEPS_2,
+        MICROSTEPS_3,
+        MICROSTEPS_4,
+        MICROSTEPS_5,
+        MICROSTEPS_6,
+        MICROSTEPS_7,
     };
-    enum LibMotorError {
-        LIB_MOTOR_OKAY,
-        LIB_MOTOR_ERROR_INVALID_DIRECTION,
-        LIB_MOTOR_ERROR_STEPS_COUNT,
-        LIB_MOTOR_ERROR_INVALID_MICROSTEPS,
+    enum LibMotorStatus {
+        OKAY,
+        ERROR_INVALID_DIRECTION,
+        ERROR_STEPS_COUNT,
+        ERROR_INVALID_MICROSTEPS,
     };
     LibMotor();
     virtual ~LibMotor();
@@ -30,10 +30,10 @@ public:
     int moveRelative(int direction, int stepsCount); // DIR[0,1], STEPS[1-1,000,000]
     int moveAbs(int position);
     int setMicroSteps(int value); // Set Microsteps 1/2^N for N = [0-7]
-    int setSpeed(double speed);
-    int setAcceleration(double acceleration);
-    int setDeceleration(double deceleration);
-    int setHoldCurrent(double holdCurrent);
+    int setSpeed(float speed);
+    int setAcceleration(float acceleration);
+    int setDeceleration(float deceleration);
+    int setHoldCurrent(float holdCurrent);
 private:
     static bool s_isInitialized;
 };

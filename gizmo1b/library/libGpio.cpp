@@ -26,60 +26,60 @@ LibGpio::~LibGpio()
 {
 }
 
-int LibGpio::setPin(int pin, bool value)
+int LibGpio::setPin(int pin, bool set)
 {
     LibRaisePrivilege libRaisePrivilege;
-    uint32 result = LIB_GPIO_OKAY;
+    uint32 result = OKAY;
     switch (pin) {
-    case LIB_GPIO_USER_LED_A:
-        gioSetBit(LIB_GPIO_USER_LED_A_PORT, LIB_GPIO_USER_LED_A_PIN, value);
+    case USER_LED_AOUT:
+        gioSetBit(LIB_GPIO_USER_LED_A_PORT, LIB_GPIO_USER_LED_A_PIN, set);
         break;
-    case LIB_GPIO_USER_LED_B:
-        gioSetBit(LIB_GPIO_USER_LED_B_PORT, LIB_GPIO_USER_LED_B_PIN, value);
+    case USER_LED_BOUT:
+        gioSetBit(LIB_GPIO_USER_LED_B_PORT, LIB_GPIO_USER_LED_B_PIN, set);
         break;
-    case LIB_GPIO_DOUT_0:
-    case LIB_GPIO_DOUT_1:
-    case LIB_GPIO_DOUT_2:
-    case LIB_GPIO_DOUT_3:
-    case LIB_GPIO_DOUT_4:
-    case LIB_GPIO_DOUT_5:
-    case LIB_GPIO_DOUT_6:
-    case LIB_GPIO_DOUT_7:
+    case DOUT_0:
+    case DOUT_1:
+    case DOUT_2:
+    case DOUT_3:
+    case DOUT_4:
+    case DOUT_5:
+    case DOUT_6:
+    case DOUT_7:
         break;
     default:
-        result = LIB_GPIO_ERROR_INVALID_PIN;
+        result = INVALID_OUTPUT_PIN;
         break;
     }
     return result;
 }
 
-int LibGpio::getPin(int pin, bool& value)
+int LibGpio::getPin(int pin, bool& isSet)
 {
     LibRaisePrivilege libRaisePrivilege;
-    int result = LIB_GPIO_OKAY;
+    int result = OKAY;
     switch (pin) {
-    case LIB_GPIO_USER_LED_A:
-        value = gioGetBit(LIB_GPIO_USER_LED_A_PORT, LIB_GPIO_USER_LED_A_PIN) != 0;
+    case USER_LED_AIN:
+        isSet = gioGetBit(LIB_GPIO_USER_LED_A_PORT, LIB_GPIO_USER_LED_A_PIN) != 0;
         break;
-    case LIB_GPIO_USER_LED_B:
-        value = gioGetBit(LIB_GPIO_USER_LED_B_PORT, LIB_GPIO_USER_LED_B_PIN) != 0;
+    case USER_LED_BIN:
+        isSet = gioGetBit(LIB_GPIO_USER_LED_B_PORT, LIB_GPIO_USER_LED_B_PIN) != 0;
         break;
-    case LIB_GPIO_USER_SWITCH_A:
-        value = LIB_GPIO_USER_SWITCH_A_VALUE != 0;
+    case USER_SWITCH_A:
+        isSet = LIB_GPIO_USER_SWITCH_A_VALUE != 0;
         break;
-    case LIB_GPIO_USER_SWITCH_B:
-        value = LIB_GPIO_USER_SWITCH_B_VALUE != 0;
+    case USER_SWITCH_B:
+        isSet = LIB_GPIO_USER_SWITCH_B_VALUE != 0;
         break;
-    case LIB_GPIO_DIN_0:
-    case LIB_GPIO_DIN_1:
-    case LIB_GPIO_DIN_2:
-    case LIB_GPIO_DIN_3:
-    case LIB_GPIO_DIN_4:
-    case LIB_GPIO_DIN_5:
-        value = false;
+    case DIN_0:
+    case DIN_1:
+    case DIN_2:
+    case DIN_3:
+    case DIN_4:
+    case DIN_5:
+        isSet = false;
         break;
     default:
-        result = LIB_GPIO_ERROR_INVALID_PIN;
+        result = INVALID_INPUT_PIN;
         break;
     }
     return result;

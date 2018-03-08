@@ -13,21 +13,21 @@ LibTec::~LibTec()
 {
 }
 
-void enable(bool en)
+void LibTec::enable(bool en)
 {
 }
 
-double getISense()
-{
-    return 0.0;
-}
-
-double getVSense()
+float LibTec::getISense()
 {
     return 0.0;
 }
 
-void setCurrent(double value)
+float LibTec::getVSense()
+{
+    return 0.0;
+}
+
+void LibTec::setCurrent(float value)
 {
 }
 
