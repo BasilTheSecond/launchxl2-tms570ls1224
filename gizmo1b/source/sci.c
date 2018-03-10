@@ -682,6 +682,42 @@ void linHighLevelInterrupt(void)
     uint32 vec = scilinREG->INTVECT0;
 	uint8 byte;
 /* USER CODE BEGIN (35) */
+	byte = 0;
+	(void)byte;
+    switch (vec)
+    {
+    case 1U:
+        sciNotification(scilinREG, (uint32)SCI_WAKE_INT);
+        break;
+    case 3U:
+        sciNotification(scilinREG, (uint32)SCI_PE_INT);
+        break;
+    case 6U:
+        sciNotification(scilinREG, (uint32)SCI_FE_INT);
+        break;
+    case 7U:
+        sciNotification(scilinREG, (uint32)SCI_BREAK_INT);
+        break;
+    case 9U:
+        sciNotification(scilinREG, (uint32)SCI_OE_INT);
+        break;
+
+    case 11U:
+        /* receive */
+        sciNotification(scilinREG, (uint32)SCI_RX_INT);
+        break;
+
+    case 12U:
+        /* transmit */
+        sciNotification(scilinREG, (uint32)SCI_TX_INT);
+        break;
+
+    default:
+        /* phantom interrupt, clear flags and return */
+        scilinREG->FLR = ~scilinREG->SETINTLVL & 0x07000303U;
+        break;
+    }
+#if 0
 /* USER CODE END */
 
     switch (vec)
@@ -743,6 +779,7 @@ void linHighLevelInterrupt(void)
         break;
     }
 /* USER CODE BEGIN (36) */
+#endif
 /* USER CODE END */
 }
 /* USER CODE BEGIN (37) */

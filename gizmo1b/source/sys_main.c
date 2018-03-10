@@ -61,13 +61,13 @@
 */
 
 /* USER CODE BEGIN (2) */
-#include "libAppStart.h"
+#include "btaStart.h"
 /* USER CODE END */
 
 int main(void)
 {
 /* USER CODE BEGIN (3) */
-    libAppStart();
+    btaStart();
 /* USER CODE END */
 
     return 0;

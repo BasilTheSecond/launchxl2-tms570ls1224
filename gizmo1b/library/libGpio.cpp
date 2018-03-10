@@ -1,5 +1,4 @@
 #include "libGpio.h"
-#include "libRaisePrivilege.h"
 #include "gio.h"
 #include "mibspi.h"
 
@@ -15,7 +14,6 @@ bool LibGpio::s_isInitialized = false;
 LibGpio::LibGpio()
 {
     if (!s_isInitialized) {
-        LibRaisePrivilege libRaisePrivilege;
         gioInit();
         mibspiInit();
         s_isInitialized = true;
@@ -28,7 +26,6 @@ LibGpio::~LibGpio()
 
 int LibGpio::setPin(int pin, bool set)
 {
-    LibRaisePrivilege libRaisePrivilege;
     uint32 result = OKAY;
     switch (pin) {
     case USER_LED_AOUT:
@@ -55,7 +52,6 @@ int LibGpio::setPin(int pin, bool set)
 
 int LibGpio::getPin(int pin, bool& isSet)
 {
-    LibRaisePrivilege libRaisePrivilege;
     int result = OKAY;
     switch (pin) {
     case USER_LED_AIN:

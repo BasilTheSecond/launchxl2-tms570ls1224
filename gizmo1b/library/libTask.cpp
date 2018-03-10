@@ -1,31 +1,37 @@
 #include "libTask.h"
 
-LibTask::LibTask(const char* name, uint16_t stackSize, UBaseType_t priority) :
+LibTask::LibTask(const char* name, uint16_t stackSize, UBaseType_t priority,
+                                                            bool isPrivileged) :
     m_name(name),
     m_stackSize(stackSize),
-    m_priority(priority)
+    m_priority(priority),
+    m_isPrivileged(isPrivileged)
 {
 }
 
 LibTask::~LibTask()
 {
-#if INCLUDE_vTaskDelete
     if (!m_taskHandle) {
         vTaskDelete(m_taskHandle);
     }
-#endif
 }
 
 void LibTask::start()
 {
-    xTaskCreate(task, m_name.c_str(), m_stackSize, this, m_priority, &m_taskHandle);
+    UBaseType_t priority = m_priority;
+    priority |= m_isPrivileged ? portPRIVILEGE_BIT : 0;
+    xTaskCreate(task, m_name.c_str(), m_stackSize, this, priority,
+                                                                 &m_taskHandle);
 }
 
 void LibTask::task(void* parameter)
 {
     reinterpret_cast<LibTask*>(parameter)->run();
-#if INCLUDE_vTaskDelete
     reinterpret_cast<LibTask*>(parameter)->m_taskHandle = NULL;
     vTaskDelete(NULL);
-#endif
+}
+
+bool LibTask::isPrivileged()
+{
+    return m_isPrivileged;
 }
