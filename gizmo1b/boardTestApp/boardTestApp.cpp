@@ -1,24 +1,16 @@
 #include "boardTestApp.h"
 #include "libSci2.h"
-
-struct BoardTestApp::RegAccessMethods BoardTestApp::s_regAccessMap[] = {
-    // launchxl2-tms570ls1224 tests
-    [USER_LED]    = {
-        .m_readMethod  = &BoardTestApp::userLedGet,
-        .m_writeMethod = &BoardTestApp::userLedSet,
-    },
-    [USER_SWITCH] = {
-        .m_readMethod  = &BoardTestApp::userSwitchGet,
-        .m_writeMethod = 0,
-    },
-    // gizmo 1b tests
-};
+#include "boardTestUserLed.h"
+#include "boardTestUserSwitch.h"
 
 BoardTestApp::BoardTestApp(const char* name) :
     LibTask(name),
-    m_libGpio(*new LibGpio()),
     m_libSci(*new LibSci2(32, 32))
 {
+    // launchxl2-tms570ls1224 tests
+    m_boardTestMap[USER_LED]    = new BoardTestUserLed;
+    m_boardTestMap[USER_SWITCH] = new BoardTestUserSwitch;
+    // gizmo 1b tests
 }
 
 BoardTestApp::~BoardTestApp()
@@ -55,7 +47,7 @@ void BoardTestApp::run()
         }
         if (!resetSci) {
             decodeMessage(message, response);
-            if (m_libSci.write(response) == OKAY) {
+            if (m_libSci.write(response) == BoardTest::OKAY) {
                 while (!m_libSci.waitForBytesWritten(1000)) {
                     continue;
                 }
@@ -87,12 +79,12 @@ void BoardTestApp::decodeMessage(std::vector<uint8>& message,
     uint32 status;
     switch (command) {
     default:
-        status = ERROR_CMD;
+        status = BoardTest::ERROR_CMD;
         break;
-    case REG_READ:
+    case BoardTest::REG_READ:
         status = regRead(address, value);
         break;
-    case REG_WRITE:
+    case BoardTest::REG_WRITE:
         status = regWrite(address, value);
         break;
     }
@@ -109,67 +101,23 @@ void BoardTestApp::decodeMessage(std::vector<uint8>& message,
     }
 }
 
+bool BoardTestApp::isAddressValid(uint32 address)
+{
+    return address < REG_MEMORY_MAP_MAX && m_boardTestMap[address];
+}
+
 int BoardTestApp::regRead(uint32 address, uint32& value)
 {
-    if (address >= REG_MEMORY_MAP_MAX) {
-        return ERROR_ADDR;
+    if (!isAddressValid(address)) {
+        return BoardTest::ERROR_ADDR;
     }
-    if (!s_regAccessMap[address].m_readMethod) {
-        return ERROR_WO;
-    }
-    value = (this->*s_regAccessMap[address].m_readMethod)();
-    return OKAY;
+    return m_boardTestMap[address]->get(address, value);
 }
 
 int BoardTestApp::regWrite(uint32 address, uint32 value)
 {
-    if (address >= REG_MEMORY_MAP_MAX) {
-        return ERROR_ADDR;
+    if (!isAddressValid(address)) {
+        return BoardTest::ERROR_ADDR;
     }
-    if (!s_regAccessMap[address].m_writeMethod) {
-        return ERROR_RO;
-    }
-    (this->*s_regAccessMap[address].m_writeMethod)(value);
-    return OKAY;
+    return m_boardTestMap[address]->set(address, value);
 }
-
-// launchxl2-tms570ls1224 tests
-uint32 BoardTestApp::userLedGet()
-{
-    bool isSet;
-    uint32 value = 0;
-    m_libGpio.getPin(LibGpio::USER_LED_AIN, isSet);
-    value |= (isSet ? LED_A_ON : LED_A_OFF);
-    m_libGpio.getPin(LibGpio::USER_LED_BIN, isSet);
-    value |= (isSet ? LED_B_ON : LED_B_OFF);
-    return value;
-}
-
-uint32 BoardTestApp::userSwitchGet()
-{
-    bool isSet;
-    uint32 value = 0;
-    m_libGpio.getPin(LibGpio::USER_SWITCH_A, isSet);
-    value |= (isSet ? SWITCH_A : 0);
-    m_libGpio.getPin(LibGpio::USER_SWITCH_B, isSet);
-    value |= (isSet ? SWITCH_B : 0);
-    return value;
-}
-
-void BoardTestApp::userLedSet(uint32 value)
-{
-    if (value & LED_A_ON) {
-        m_libGpio.setPin(LibGpio::USER_LED_AOUT, true);
-    }
-    if (value & LED_A_OFF) {
-        m_libGpio.setPin(LibGpio::USER_LED_AOUT, false);
-    }
-    if (value & LED_B_ON) {
-        m_libGpio.setPin(LibGpio::USER_LED_BOUT, true);
-    }
-    if (value & LED_B_OFF) {
-        m_libGpio.setPin(LibGpio::USER_LED_BOUT, false);
-    }
-}
-
-// gizmo 1b tests
