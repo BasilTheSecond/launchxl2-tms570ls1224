@@ -1,12 +1,12 @@
-#ifndef _BTA_APP_H_
-#define _BTA_APP_H_
+#ifndef _BOARD_TEST_APP_H_
+#define _BOARD_TEST_APP_H_
 
 #include "sys_common.h"
 #include "libSci.h"
 #include "libTask.h"
 #include "libGpio.h"
 
-class BtaApp: public LibTask {
+class BoardTestApp: public LibTask {
 public:
     // Communication protocol between master (M) and slave (S):
     // Register read:
@@ -53,9 +53,8 @@ public:
 
     // Command
     enum Command {
-        REG_READ  = 0x01, // register read
-        REG_WRITE = 0x02, // register write
-        REG_MAX
+        REG_READ  = 1, // register read
+        REG_WRITE = 2, // register write
     };
 
     // Command status
@@ -63,16 +62,21 @@ public:
         OKAY,       // Okay
         ERROR_CMD,  // Error unknown command
         ERROR_ADDR, // Error unknown register address
-        ERROR_RO,   // Error RO register
+        ERROR_RO,   // Error read-only register
+        ERROR_WO,   // Error write-only register
     };
 
     // Register memory map
     enum RegMemoryMap {
-        USER_LED    = 0x00000000,  // USER_LED register, R/W
-        USER_SWITCH = 0x00000004,  // USER_SWITCH register, R/O
+        // launchxl2-tms570ls1224
+        USER_LED,     // USER_LED register
+        USER_SWITCH,  // USER_SWITCH register
+        // gizmo 1b
+        REG_MEMORY_MAP_MAX
     };
 
     // Register bits
+    // launchxl2-tms570ls1224
     enum RegUserLedBits {
         LED_A_ON  = (uint32)((uint32)1U << 0U),
         LED_A_OFF = (uint32)((uint32)1U << 1U),
@@ -84,14 +88,32 @@ public:
         SWITCH_A = (uint32)((uint32)1U << 0U),
         SWITCH_B = (uint32)((uint32)1U << 1U),
     };
-    BtaApp(const char* name);
-    virtual ~BtaApp();
+
+    // gizmo 1b
+public:
+    BoardTestApp(const char* name);
+    virtual ~BoardTestApp();
+private:
+    void decodeMessage(std::vector<uint8>& message,
+                                                  std::vector<uint8>& response);
+    int regRead(uint32 address, uint32& value);
+    int regWrite(uint32 address, uint32 value);
+    // launchxl2-tms570ls1224 tests
+    uint32 userLedGet();
+    uint32 userSwitchGet();
+    void userLedSet(uint32 value);
+    // gizmo 1b tests
 private:
     virtual void run();
     LibGpio& m_libGpio;
     LibSci& m_libSci;
     union MasterToSlaveMsg m_masterToSlave;
     union SlaveToMasterMsg m_slaveToMaster;
+    struct RegAccessMethods {
+        uint32 (BoardTestApp::* m_readMethod)();
+        void (BoardTestApp::* m_writeMethod)(uint32);
+    };
+    static struct RegAccessMethods s_regAccessMap[];
 };
 
-#endif /* _BTA_APP_H_ */
+#endif // _BOARD_TEST_APP_H_
