@@ -50,6 +50,7 @@
 #include "sys_common.h"
 
 /* USER CODE BEGIN (1) */
+#include "boardTestAppStart.h"
 /* USER CODE END */
 
 /** @fn void main(void)
@@ -61,13 +62,12 @@
 */
 
 /* USER CODE BEGIN (2) */
-#include "btaStart.h"
 /* USER CODE END */
 
 int main(void)
 {
 /* USER CODE BEGIN (3) */
-    btaStart();
+    boardTestAppStart();
 /* USER CODE END */
 
     return 0;
